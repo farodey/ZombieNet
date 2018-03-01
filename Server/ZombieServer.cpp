@@ -200,7 +200,8 @@ void ZombieServer::CloseClient(DWORD index)
 
 	// Отправка данных в окно
 	char IDS[10] = "";
-	SendMessage(hWnd, WM_CLOSE_CLIENT, (WPARAM)_itoa_s(id[index], IDS, 10), 0);
+	_itoa_s(id[index], IDS, 10);
+	SendMessage(hWnd, WM_CLOSE_CLIENT, (WPARAM)IDS, 0);
 
 	// Очищаем буфер, сдвигаем массивы
 	for (int x = index; x < eventTotal; x++)
