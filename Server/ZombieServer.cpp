@@ -22,7 +22,7 @@ ZombieServer::ZombieServer()
 	eventTotal = 0;
 }
 
-// Функция стартует ассинхронный сервер (WSAEventSelect)
+// Метод стартует ассинхронный сервер (WSAEventSelect)
 BOOL ZombieServer::StartServer(HWND hWndPar)
 {
 	hWnd = hWndPar; // Сохраняем хендл окна, в которое будем передавать сообщения
@@ -94,7 +94,7 @@ BOOL ZombieServer::StartServer(HWND hWndPar)
 	return TRUE;
 }
 
-// Функция отсылает сообщение клиенту
+// Метод отсылает сообщение клиенту
 BOOL ZombieServer::SendPacket(int indexWait, Packet* packet)
 {
 	DWORD* uF = 0;
@@ -162,7 +162,7 @@ BOOL ZombieServer::AcceptClient(DWORD index)
 
 	SOCKADDR addrBot; // Структура принимает данные о подключившемся клиете (IP адрес)
 
-					  // Подключаем клиента
+	// Подключаем клиента
 	client_socket[eventTotal] = accept(client_socket[index], &addrBot, NULL);
 	if (client_socket[eventTotal] == SOCKET_ERROR)
 	{
@@ -183,7 +183,6 @@ BOOL ZombieServer::AcceptClient(DWORD index)
 	ZeroMemory(packet.data, PACKET_DATA_SIZE);
 	packet.type = PACKET_ADD_ID;
 	packet.id = id[eventTotal];
-	//packet.SendPacket(client_socket[eventTotal]);
 	SendPacket(eventTotal, &packet);
 
 	eventTotal++;
