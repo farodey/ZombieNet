@@ -57,9 +57,6 @@ private:
 	DWORD ParseID1(char* data);
 	DWORD ParseID2(char* data);
 
-
-
-
 	HWND hWnd;												// Хендл окна, которому необходимо передавать сообщения
 
 	int GetID(DWORD index);	// Возвращает ID бота
