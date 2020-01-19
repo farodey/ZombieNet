@@ -1,5 +1,6 @@
-// Клиентская программа для удаленного администрирования
-// При установке на компьютер выводит сообщение об успешной установке
+//
+// Стоит всё это переписать с использованием блокирующих вызовов фунций для работы с сетью (((
+//
 
 #include "stdafx.h"
 #include "Client.h"
@@ -117,7 +118,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	// Цикл основного сообщения:
+	// Цикл обработки сообщений
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		TranslateMessage(&msg);
@@ -165,7 +166,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 //
-// Оконная функция, обрабатывает сообщения сокета
+// Оконная функция, обрабатывает сообщения сокета.
+// По сути это однопоточный ассинхронный сервер с обратным соединением.
+// Подключается к одному единственному клиенту и работает только с ним.
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -175,7 +178,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 
-		// Подключаемся к серверу, функция висит пока не подключимся
+		// Вызов следующей функции блокирует поток выполнения программы
+		// до подключения к серверу (спешить некуда, будем висеть)
 		conSock = ConnectServer(hWnd, ADDRES_SERVER);
 		break;
 
@@ -516,7 +520,7 @@ BOOL WriteBuffer()
 
 void CloseConnect(HWND hWnd)
 {
-	// Отключаемся и пробуем подключиться заново
+	// Отключаемся
 	closesocket(conSock);
 	numRecv = 0;
 	writeAccess = FALSE;
